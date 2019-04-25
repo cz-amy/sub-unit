@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>alert</title>
+    </head>
+
+    <body>
+        <script>
+            (function (window, document) {
+                function myAlert(str, click, useCancel) {
+                    function parseDom(arg) {
+                        var objE = document.createElement("div");
+                        objE.innerHTML = arg;
+                        return objE.childNodes[0];
+                    };
+                    function Itcast(selector) {
+                        var list = document.querySelectorAll(selector);
+                        [].slice.apply(this);
+                    }
+                    Itcast.prototype = {
+                        append: function (elem) {
+                            this.appendChild(elem)
+                        },
+                        appendTo: function (elem) {
+                            elem.append(this);
+                        }
+                    }
+
+                    function append(elem) {
+                        this.appendChild(elem)
+                    }
+                    function appendTo(elem) {
+                        elem.append(this);
+                    }
+                    function remove(elem) {
+                        elem.parentNode.removeChild(elem);
+                    }
+
+                    console.log(parseDom("<div>好啊哈<div>好啊哈</div></div>"));
+
+                    var overflow = "";
+                    var mask = null;
+                    var clickHandler = click || $.noop;
+                    var myClickHandler = function () {
+                        remove(mask);
+                        clickHandler();
+                    };
+                    var init = function () {
+
+                        mask = parseDom("<div style='width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;text-align: center;position:fixed;left:0;top:0;'></div>");
+                        var alertbox = parseDom("<div style='width:300px;position:absolute;top:30%;left:50%;margin-left:-150px;padding:20px;background:#fff;border-radius:5px;'>" +
+                            "<div style='padding-bottom:10px;border-bottom:1px solid #e5e5e5;font-size:20px;color:#f83;'>温馨提示</div></div>")
+
+                        mask.append(alertbox);
+
+                        var content = parseDom("<div style='padding:10px 0;color:#333;border-bottom:1px solid #e5e5e5;'>" + str + "</div>")
+                        alertbox.append(content);
+
+                        var myalert_btn_div = parseDom("<div style='padding-top:10px;'></div>");
+                        alertbox.append(myalert_btn_div);
+                        var okBtn = parseDom("<div style='float:left;width:100%;color:#eee;border-radius:2px;padding:7px 0;box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;' class='bluebg1'>确定</div>")
+                        myalert_btn_div.append(okBtn)
+
+                        okBtn.addEventListener("click", myClickHandler);
+
+                        if (useCancel) {
+                            okBtn.style.cssText = "border-right: 5px solid #fff;width: 50%;";
+                            parseDom("<div style='float:left;width:50%;border-left:5px solid #fff;border-radius:2px;padding:7px 0;color:#fff;box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;background:#ccc;'>取消</div>")
+                                .appendTo(myalert_btn_div).addEventListener("click", myClickHandler);
+                        }
+
+                        document.body.append(mask);
+                    };
+                    init();
+                }
+
+                window.myAlert = myAlert;
+            })(window, document)
+
+            myAlert("你好", function () {
+                console.log("不好");
+            })
+        </script>
+    </body>
+
+</html>
