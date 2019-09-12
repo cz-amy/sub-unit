@@ -1,0 +1,242 @@
+<template>
+	<view class="keyboard_box">
+		<view class="box_bottom" v-show="showTyper===1||showTyper===2">
+			<view class="close"><button class="closeBtn" @click="closeKeybord">关闭</button></view>
+			<view class="demo-block" id="prosBord" v-show="showTyper===1">
+				<view class="keyboard">
+					<view class="btn-box" style="display:inline-block;" v-for="item in provinces"><button class="keybord_btn" @click="input(item)">{{item}}</button></view>
+					<view class="btnBox">
+						<button class="keybord_btn functionBtn" id="sure_btn" @click="change(1)">
+							<image src="../../static/img/middle/keyCode.png" mode=""></image>
+						</button>
+						<view class="newplate">
+							<view class="btn-box" style="display:inline-block;" v-for="item in specialPlate">
+								<button class="keybord_btn" @click="input(item)">{{item}}</button></view>
+						</view>
+						<button class="keybord_btn functionBtn" id="dele_btn" @click="input('Del')">
+							<image src="../../static/img/middle/delete.png" mode=""></image>
+						</button>
+					</view>
+				</view>
+
+			</view>
+			<view class="demo-block" id="keysBord" v-show="showTyper===2">
+				<view class="keyboard">
+					<view class="btn-box" style="display:inline-block;" v-for="(item,index) in keyNums" :name="index" :key="index"><button
+						 class="keybord_btn" @click="input(item)">{{item}}</button></view>
+					<view class="btnBox">
+						<button class="keybord_btn functionBtn" id="font_btn" @click="change(2)">
+							<image src="../../static/img/middle/keyCode.png" mode=""></image>
+						</button>
+						<view class="newplate">
+							<view class="btn-box" style="display:inline-block;" v-for="item in specialChar">
+								<button class="keybord_btn" @click="input(item)">{{item}}</button></view>
+						</view>
+						<button class="keybord_btn functionBtn" id="dele_btn" @click="input('Del')">
+							<image src="../../static/img/middle/delete.png" mode=""></image>
+						</button>
+					</view>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script>
+	export default {
+		name:"keyboard",
+		props: {
+		  showTyper: {
+		    type: Number,
+		    default: 0
+		  },
+		},
+		data() {
+			return {
+				carNum: '',
+				keyType:0,
+				palateAry: [],
+				// keyType: 0, //输入法的值，0表示不显示，1表示显示省输入键字母输入键盘
+				//省
+				provinces: ['京', '沪', '浙', '苏', '粤', '鲁', '晋', '冀', '豫', '川', '渝', '辽', '吉', '黑', '皖', '鄂', '津',
+					'贵', '云', '桂', '琼', '青', '藏', '蒙', '宁', '甘', '陕', '闽', '赣', '湘'
+				],
+				specialPlate: ['新', '使', '领', '学', '警', '港', '澳'],
+				//数字字母
+				keyNums: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'A',
+					'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'
+				],
+				specialChar: ['Z', 'X', 'C', 'V', 'B', 'N', 'M'],
+				carNumber: '', //输入的值
+			}
+		},
+		mounted() {},
+		methods: {
+			changeTyper: function() {
+				//判断输入的车牌号处于什么状态，为空？已输入第一个值（即省）？输入省之后的值？
+				if (this.carNumber.length >= 1) {
+					this.keyType = 2;
+				}
+				if (this.carNumber.length == 0) {
+					this.keyType = 1;
+				}
+				this.$emit("typeChange",this.keyType)
+			},
+			input: function(item) {
+				//键盘点击事件，传入键盘本身的值
+				if (item == 'Del') {
+					//判断是否点击了删除按钮
+					this.carNumber = this.carNumber.slice(0, -1);
+					this.changeTyper();
+					this.$emit('onInput',this.carNumber)
+					return;
+				}
+				if (this.carNumber.length < 8) {
+					//判断当前的车牌号的数目是否合法，还未超出7位则可继续输入
+					this.carNumber = this.carNumber + item;
+					this.changeTyper();
+				} else {
+					alert('车牌号码超出正常范围');
+				}
+				
+				this.$emit('onInput',this.carNumber)
+			},
+			change: function(num) {
+				this.keyType = (num == 1 && 2) || (num == 2 && 1);
+				this.$emit("typeChange",this.keyType)
+			},
+			closeKeybord: function() {
+				var carNumberReg = /^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1}$/;
+				if (!carNumberReg.test(this.carNumber)) {
+					alert('请输入正确的车牌号码');
+					return;
+				}
+				this.keyType = 0;
+				this.$emit("typeChange",this.keyType)
+			}
+		},
+		components: {},
+	}
+</script>
+
+<style>
+	.uni-input {
+		height: 100%;
+		width: 610upx;
+		display: inline-block;
+		vertical-align: middle;
+	}
+
+	.search {
+		width: 35.41upx;
+		height: 35.41upx;
+		margin: 0 12.5upx 0 25upx;
+		vertical-align: middle;
+	}
+
+	.seach_box {
+		height: 66.66upx;
+		line-height: 66.66upx;
+		width: 683.33upx;
+		background-color: #EFF1F6;
+	}
+
+	.demo-block {
+		width: 100%;
+		height: 450upx;
+	}
+
+	.box_bottom {
+		position: absolute;
+		left: 0;
+		bottom: 0;
+	}
+
+	.box_bottom uni-button:after {
+		border: none;
+	}
+
+	.box_bottom .close {
+		height: 87.5upx;
+		background-color: #fff;
+		padding: 0 41.66upx;
+		box-shadow: 0px -1px 0px 0px rgba(0, 0, 0, 0.25);
+	}
+
+	.btn-box {
+		width: 75upx;
+		box-sizing: border-box;
+		padding: 10.41upx 4.17upx 10.41upx 4.15upx;
+		height: 112.5rpx;
+		background: #e2e3e7;
+	}
+
+	.btn-box button {
+		background-color: #fff;
+		box-shadow: 0px 2px 0px 0px rgba(0, 0, 0, 0.25);
+		border-radius: 10.41upx;
+		width: 100%;
+		height: 100%;
+	}
+
+	button {
+		font-family: inherit;
+		font-size: inherit;
+		outline: 0;
+		border: 0;
+	}
+
+	.newplate {
+		display: inline-block;
+	}
+
+	.closeBtn {
+		float: right;
+		height: 100%;
+		font-size: 37.5upx;
+		color: #38A3D9;
+		font-weight: 500;
+		background-color: #fff;
+	}
+
+	.keyboard {
+		width: 100%;
+		height: 450upx;
+		background: #e2e3e7;
+	}
+
+	.keyboard uni-button {
+		padding: 0;
+	}
+
+	.btnBox {
+		font-size: 0;
+	}
+
+	.keybord_btn {
+		font-size: 37.5upx;
+	}
+
+	.btn-box #font_btn {
+		background-color: rgba(0, 0, 0, 0.25);
+	}
+
+	.btnBox .functionBtn {
+		box-sizing: border-box;
+		vertical-align: top;
+		display: inline-block;
+		background: #e2e3e7;
+		width: 110.41upx;
+		height: 112.5upx;
+		padding: 12.5upx 2.08upx 8.33upx 4.16upx;
+	}
+
+	view[name="20"] {
+		margin-left: 39.06upx;
+	}
+
+	.btnBox .functionBtn image {
+		width: 100%;
+		height: 100%;
+	}
+</style>
