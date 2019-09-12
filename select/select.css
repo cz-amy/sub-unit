@@ -1,10 +1,13 @@
 
 
 .unitSelect {
-    position: relative;
+    position: fixed;
+    top:0;
+    left: 0;
     z-index: 0;
     opacity: 0;
     display: none;
+    background: rgba(0, 0, 0, 0.7);
     -webkit-transition: opacity 0.4s, z-index 0.4s;
     transition: opacity 0.4s, z-index 0.4s;
   }
@@ -21,6 +24,8 @@
 
 .unitSelect-show {
     opacity: 1;
+    width: 100vw;
+    height: 100vh;
     z-index: 10000;
     display: block;
 }

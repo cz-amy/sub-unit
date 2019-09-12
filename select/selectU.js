@@ -28,7 +28,7 @@
 			this.unitSelect = document.createElement('div');
 			this.unitSelect.className = 'unitSelect';
 			this.unitSelect.innerHTML =
-				'<div class="maskLayer"></div>' +
+				// '<div class="maskLayer"></div>' +
 				'<div class="content">' +
 				'<div class="btnBar">' +
 				'<div class="fixWidth">' +
@@ -125,12 +125,15 @@
 				}
 				self.callback(data);
 			});
+			this.unitSelect.addEventListener('click',function () {
+				self.unitSelect.classList.remove('unitSelect-show');
+			})
 			// this.trigger.addEventListener('click', function() {
 			// 	self.unitSelect.classList.add('unitSelect-show');
 			// });
-			this.grayLayer.addEventListener('click', function() {
-				self.unitSelect.classList.remove('unitSelect-show');
-			});
+			// this.grayLayer.addEventListener('click', function() {
+			// 	self.unitSelect.classList.remove('unitSelect-show');
+			// });
 			this.popUp.addEventListener('click', function() {
 				event.stopPropagation();
 			});
